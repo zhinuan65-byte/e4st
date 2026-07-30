@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+int main(void){
+	int a=0;
+	int b=0;
+	int c=0;
+	int d=0;
+	scanf("%d %d %d %d",&a,&b,&c,&d); 
+//	printf("%d %d %d %d",a,b,c,d);//use for testing
+	if(a==b||b==c||a==c){
+		printf("Report");
+	}else if(a==d){
+		puts("A");
+	}else if(b==d){
+		puts("B");
+	}else if(c==d){
+		puts("C");
+	}else if((a<b&&b<c)||(c<b&&b<a)){
+		puts("B");
+	}else if((b<a&&a<c)||(c<a&&a<b)){
+		puts("A");
+	}else if((a<c&&c<b)||(b<c&&c<a)){
+		puts("C");
+	}
+}
