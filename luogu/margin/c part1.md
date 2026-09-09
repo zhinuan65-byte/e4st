@@ -188,5 +188,48 @@ end:
 
 ## 第三部分 类型 字符 逻辑运算 6
 
+### 类型
 c是一种有类型的语言，即每个变量要规定它的类型，表现为前面程序中的`int i`这种声明
 <br>
+c语言的类型一般分为四种:
+<br>
+整数:char,short,int,long,long long;还有逻辑，即bool也是整数类型
+<br>
+浮点数:float,double,long double
+<br>
+指针
+<br>
+自定义类型
+<br>
+
+```c
+#include <stdio.h>
+
+int main() {
+    int a;
+    a = 6;
+    printf("sizeof(int)=%ld ", sizeof(int));
+    printf("sizeof(a)=%ld", sizeof(a));
+    return 0;
+}
+```
+
+在这个程序中的sizeof是用来查看类型或者变量所占的字节数，最后这个程序会输出`4 4`，即int类型占据4个字节，同时1个字节占据8个比特，所以int类型占据32个比特
+<br>
+sizeof是静态运算符，结果在编译的时候就决定了，sizeof()小括号内的运算是不会进行的
+|类型|占据字节数|
+|---|---|
+|bool|1|
+|char|1|
+|short|2|
+|int|一般是4|
+|long|一般是8|
+|long long|8|
+
+int一般表示的是一个寄存器的大小，同时也是cpu传递给ram一次数据的大小
+<br>
+在计算机中采用二进制保存数据，其中负数靠补码保存,拿char类型举例，如下图
+![补码](photos_for_margin/photo_2.png)
+那么我们知道0000 0000就是0，而高位为1的表示负数
+<br>
+如1111 1111~1000 0000表示-1~-128，高位为0的表示正数，如0000 0001~0111 1111表示1~127
