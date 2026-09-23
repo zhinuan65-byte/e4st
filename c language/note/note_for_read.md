@@ -438,11 +438,11 @@ void swap(int *pa, int *pb)
 <br>
 *p也等价于p[0],同时我们也可以写出*a=25来表示a[0]=25
 <br>
-`int*p=a`是合法的而`int b[]=a`是非法的，原因是数组b实际上等于int * const b,即常量指针，b所指向的地址不能被改变,但是通过这个地址还是可以改变这个地址里的值的
+`int*p=a`是合法的而`int b[]=a`是非法的，原因是数组b实际上等于,即常量指针，b所指向的地址不能被改变,但是通过这个地址还是可以改变这个地址里的值的
 <br>
 如果是`const int * p`,那么无法通过这个指针修改值，通过这个指针获得的地址变成只读，我们仍然可以让这个指针指向别的地址,和前面的区别是*在const前还是后
 <br>
-如果是const int a[10],那么其实是和const int没什么区别的,我们可以在函数里写int sum(const int a[])来保护数组的值不被函数里的运算改变，一旦试图改变，就会报错
+函数中如果是const int a[10],那么其实是和const int没什么区别的,我们可以在函数里写int sum(const int a[])来保护数组的值不被函数里的运算改变，一旦试图改变，就会报错
 <br>
 指针做加减运算的时候，指针做的运算是加减上几个单位指针所指地址类型的内存,相当于加单位步长,如果指针指向的不是一片连续的区域，那么这种运算就没有意义
 <br>
@@ -477,26 +477,152 @@ free(answer);
 
 
 
-## 第六部分 字符串 枚举 结构 10~11
+## 第六部分 字符串 枚举 结构 联合10~11
+
+### 字符串
 
 `char word[]={'H','e','l','l','o'}`是一个字符数组，但不是一个字符串
 <br>
-`char word[]={'H','e','l','l','o','\0'};`而这个是字符串,字符串是以整数0结尾的一串字符，0标志字符串的结束，但它不是字符串的一部分，计算字符串的时候不会包含这个0，字符串可以用指针和数组访问，用指针更多，头文件<string.h>是字符串很常用的
+`char word[]={'H','e','l','l','o','\0'};`而这个是字符串,字符串是以整数0结尾的一串字符，0标志字符串的结束，但它不是字符串的一部分，计算字符串的时候不会包含这个0，但是用sizeof查看时，会包括这个0，字符串可以用指针和数组访问，用指针更多，头文件<string.h>是字符串很常用的
 <br>
 实际上`'\0'`就是等于`0`，所以上面那个字符串也等价于`char word[]={'H','e','l','l','o',0};`
 <br>
+定义字符串变量的三种形式:
 <br>
+`char *str`指向字符串常量的指针，指向的位置是只读的，相当于const char* str
 <br>
+char word[]：自动大小的字符数组
 <br>
+char line[10]：固定大小的字符数组，其中'\0'也要占据一位数组位置
 <br>
+两个相邻的字符串常量会自动被连接起来，在printf为了方便阅读常常用到
 <br>
+字符串的输入输出用%s，scanf会一直读取直到遇到空格或者tab或者回车
 <br>
+`scanf("%7s"，&a)`我们可以这样来限制读入时只读取七个字节来存入大小为8的字符串数组中
 <br>
+`getchar`用于读取一个字符，如果读取失败就会返回EOF，所以这个函数是int类型而不是char类型
 <br>
+`putchar`用于输出一个字符，如果输入失败就会返回EOF，所以这个函数是int类型而不是char类型
+<br>
+在string.h的头文件中，还有其他关于字符串的函数
+<br>
+| 函数   | 作用     |
+|--------|----------|
+| `strlen` | 求字符串长度 |
+| `strcmp` | 比较字符串 |
+| `strcpy` | 复制字符串 |
+| `strcat` | 连接字符串 |
+| `strchr` | 查找字符   |
+| `strstr` | 查找字符串 |
+<br>
+`int strlen(const char *str);`其值为字符串的长度，不包括0，所以可以理解为返回这个字符串数组中0的下标
+<br>
+`int strcmp(const char *str1, const char *str2);`是比较两个字符串，两个字符串相等返回0，str1小于str2返回负数，str1大于str2返回正数，实际上返回的是两个字符串按数组顺序比较时第一次遇到不同字符的差值，有的计算机环境会把正数变成1，负数变成-1来返回
+<br>
+`char *strcpy(char *restrict des, const char *restrict src);`是复制一个字符串到另一个字符串,这里的restrict表示他们的地址不重叠，一般用的时候，会用malloc一块新内存来避免地址重叠
+<br>
+`char *strcat(char *des, const char *src);`是将一个字符串连接到另一个字符串上，其中前者必须要有足够的空间，我们可以改成`strncat(char *des, const char *src，5)`这种，这样可以限制它最多复制5个字符
+<br>
+`char *strchr(const char *str, int character);`是从左寻找一个字符第一次出现的位置并返回地址，找不到就返回NULL
+<br>
+`char *strrchr(const char *str, int character);`是从右寻找一个字符第一次出现的位置并返回地址，找不到就返回NULL
+<br>
+`char *strstr(const char *str, const char *substring);`是从左寻找一个字符串第一次出现的位置并返回地址，找不到就返回NULL
+<br>
+`char *strcasestr(const char *s1, const char *s2);`是从左寻找一个字符串第一次出现的位置并返回地址，找不到就返回NULL,这个过程会忽略大小写
+<br>
+上面的这些字符串函数，往往会在str后面加上后缀来扩充功能，加上n就可以限制长度，如strnlen是最多计算n个字符，strncmp是最多比较几个字符，strncpy是最多复制几个字符，strncat是最多连接几个字符，查找不可以加上n
+<br>
+加上case就可以忽略大小写，查找和比较都可以加上这个后缀
+<br>
+后缀r仅strrchr查找字符可以用
+
+### 枚举 结构 联合
+
+#### 枚举
+为了增强程序可读性，要用符号代替具体的数字
+<br>
+这里的enum声明了一种枚举类型，这里的Weekday就是枚举类型名字，这个名字可以忽略掉，如果里面有n个元素，那么其中的值依次为0，1，2...，n-1，有个技巧是，可以在其中的最后加上num，num的值就是n,既然作为一种声明，那么就是一种语句，所以要在结尾加上分号，下面的声明结构也是如此
+
+```c
+#include <stdio.h>
+
+enum Weekday {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+};
+
+int main(void)
+{
+    enum Weekday day = MONDAY;
+    printf("%d\n", day);  // 0
+    return 0;
+}
+```
+
+<br>
+在计算机内部，枚举类型就是int类型，所以输入输出可以当作int
+<br>
+我们在枚举的时候也可以指定值，如MONDAY=3这样，这样就可以跳过没有递增到的值并且继续递增
+<br>
+枚举其实是不好用的，了解即可
+
+#### 结构
+一个结构就是一种复合的数据类型，相当于把多个数据类型整合在一起
+<br>
+这里的struct声明了一种结构类型，这个结构类型的名字叫做date，其中有三个int类型在结构里，我们要访问结构里的变量是用这个结构的名字加上`.`，然后再加上结构里的类型名字
+
+```c
+#include <stdio.h>
+
+struct date {
+    int month;
+    int day;
+    int year;
+};
+
+int main(void)
+{
+    struct date today = {7, 31, 2014};
+
+    printf("Today's date is %d-%d-%d\n",
+           today.year, today.month, today.day);
+
+    return 0;
+}
+```
+
+我们一般把声明结构放在主函数外面，这样就可以被多个函数所使用
+<br>
+下面是定义结构体的三种形式
+
+| 写法 | 代码 | 说明 |
+|------|------|------|
+| 形式 1 | `struct point { int x; int y; };` | 定义结构体类型，没有定义变量 |
+| 形式 2 | `struct { int x; int y; } p1, p2;` | 定义了结构体和变量2，但是这种结构没有名字 |
+| 形式 3 | `struct point { int x; int y; } p1, p2;` | 定义结构体类型并声明变量 |
+
+<br>
+`struct date today = {07, 31, 2014};`我们需要给结构里的变量分别赋初始值，不然里面就是垃圾值
+<br>
+`struct date thismonth = {.month = 7, .year = 2014};`我们也可以这样来指定赋值
+<br>
+`p1=(struct date){7,31,2014}`我们也可以利用类型转换来整体赋值
+<br>
+结构和数组不一样的地方是，结构变量的名字的并不是它的地址，必须使用&来获取地址
+<br>
+我们也有更加方便取变量地址的方式，就是->,
 <br>
 <br>
 
-## 第七部分 全局与局部 位运算 12~13
+## 第七部分 宏 全局变量 局部变量 位运算 12~13
+
 <br>
 <br>
 <br>
